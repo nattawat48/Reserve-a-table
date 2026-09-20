@@ -3,10 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจองโต๊ะงานเลี้ยงคณะ - ซิงค์ข้อมูลสดแบบเรียลไทม์ (Real-time)</title>
+  <title>ระบบจองโต๊ะงานเลี้ยงคณะ - ซิงค์ข้อมูลเรียลไทม์ออนไลน์ (Live Cloud Sync)</title>
+  
+  <!-- Font Prompt -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -19,14 +23,15 @@
       }
     }
   </script>
+
   <style>
-    /* Clean subtle scrollbar */
+    /* Clean subtle scrollbars */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #f1f5f9; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    /* Light blueprint grid background */
+    /* Crisp Blueprint Grid Background */
     .blueprint-white-bg {
       background-color: #ffffff;
       background-image: radial-gradient(#cbd5e1 1.2px, transparent 1.2px);
@@ -62,12 +67,12 @@
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-500 via-indigo-500 to-rose-400 flex items-center justify-center shadow-md shadow-indigo-100 text-white text-2xl font-black shrink-0">
+        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-indigo-600 to-teal-400 flex items-center justify-center shadow-md shadow-indigo-100 text-white text-2xl font-black shrink-0">
           🗺️
         </div>
         <div>
           <div class="flex items-center gap-2 flex-wrap">
-            <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h1 class="text-base sm:text-xl md:text-2xl font-extrabold text-slate-900 tracking-tight">
               ผังจองโต๊ะงานเลี้ยงสังสรรค์
             </h1>
             <!-- Live Indicator Badge -->
@@ -82,80 +87,93 @@
         </div>
       </div>
 
-      <!-- Quick Status Badges -->
-      <div class="flex items-center gap-3">
-        <div class="hidden md:flex items-center gap-3 bg-slate-100/90 px-4 py-2 rounded-2xl border border-slate-200 text-xs shadow-inner">
+      <!-- Quick Actions and Stats -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Live Seating Counters -->
+        <div class="hidden lg:flex items-center gap-3 bg-slate-100/90 px-3.5 py-2 rounded-2xl border border-slate-200 text-xs shadow-inner">
           <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="text-slate-600">ว่าง: <strong id="stat-tables-free" class="text-emerald-600 font-bold">--</strong></span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span class="text-slate-600">ว่าง: <strong id="stat-tables-free" class="text-emerald-600 font-bold">25</strong></span>
           </div>
           <span class="text-slate-300">|</span>
           <div class="flex items-center gap-1.5">
-            <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
-            <span class="text-slate-600">จองแล้ว: <strong id="stat-tables-booked" class="text-rose-600 font-bold">--</strong></span>
+            <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+            <span class="text-slate-600">จองแล้ว: <strong id="stat-tables-booked" class="text-rose-600 font-bold">0</strong></span>
           </div>
           <span class="text-slate-300">|</span>
           <div class="text-slate-600">
-            ที่นั่ง: <strong id="stat-seats-booked" class="text-indigo-600 font-bold">--/100</strong>
+            ที่นั่ง: <strong id="stat-seats-booked" class="text-indigo-600 font-bold">0/100</strong>
           </div>
         </div>
 
-        <button onclick="promptResetAll()" class="px-3.5 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 transition flex items-center gap-1.5 shrink-0 shadow-sm" title="ล้างการจองทั้งหมดในเซิร์ฟเวอร์">
-          <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <!-- Cloud Database Config Button -->
+        <button onclick="openConfigModal()" class="px-3 py-2 text-xs font-semibold text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-xl border border-indigo-200 transition flex items-center gap-1.5 shrink-0 shadow-sm" title="ตั้งค่าเชื่อมต่อฐานข้อมูลคลาวด์สำหรับโฮสต์ออนไลน์">
+          <span>⚙️</span>
+          <span class="hidden sm:inline">ตั้งค่าคลาวด์ออนไลน์</span>
+        </button>
+
+        <!-- Export CSV Button -->
+        <button onclick="exportToCSV()" class="px-3 py-2 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-xl border border-emerald-200 transition flex items-center gap-1.5 shrink-0 shadow-sm" title="ส่งออกรายชื่อผู้จองเป็น Excel/CSV">
+          <span>📊</span>
+          <span class="hidden md:inline">ส่งออกรายชื่อ</span>
+        </button>
+
+        <!-- Reset Button -->
+        <button onclick="promptResetAll()" class="px-3 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 transition flex items-center gap-1.5 shrink-0 shadow-sm" title="ล้างการจองทั้งหมดในระบบ">
+          <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          <span class="hidden sm:inline">รีเซ็ตโต๊ะทั้งหมด</span>
+          <span class="hidden sm:inline">รีเซ็ต</span>
         </button>
       </div>
     </div>
   </header>
 
-
   <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
 
-    <!-- Filter & Search Bar -->
+    <!-- Filter & Search Toolbar -->
     <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
       <!-- Zone Tabs -->
-      <div class="flex flex-wrap items-center gap-2">
-        <button onclick="setFilterZone('ALL')" id="filter-btn-ALL" class="zone-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-sm">
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <button onclick="setFilterZone('ALL')" id="filter-btn-ALL" class="zone-pill-btn px-3 py-1.5 rounded-xl text-xs font-bold transition bg-indigo-600 text-white shadow-sm">
           ทั้งหมด (25 โต๊ะ)
         </button>
-        <button onclick="setFilterZone('1')" id="filter-btn-1" class="zone-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-blue-700 border border-blue-200 hover:bg-blue-100">
+        <button onclick="setFilterZone('1')" id="filter-btn-1" class="zone-pill-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-blue-700 border border-blue-200 hover:bg-blue-100">
           🔵 ปี 1 (11 โต๊ะ)
         </button>
-        <button onclick="setFilterZone('1+2')" id="filter-btn-1+2" class="zone-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-teal-700 border border-teal-200 hover:bg-teal-100">
-          🔷 โต๊ะร่วม ปี 1+2 (1 โต๊ะ)
+        <button onclick="setFilterZone('1+2')" id="filter-btn-1+2" class="zone-pill-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-teal-700 border border-teal-200 hover:bg-teal-100">
+          🔷 ร่วม ปี 1+2 (1 โต๊ะ)
         </button>
-        <button onclick="setFilterZone('2')" id="filter-btn-2" class="zone-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100">
+        <button onclick="setFilterZone('2')" id="filter-btn-2" class="zone-pill-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100">
           🟢 ปี 2 (3 โต๊ะ)
         </button>
-        <button onclick="setFilterZone('3')" id="filter-btn-3" class="zone-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-amber-700 border border-amber-200 hover:bg-amber-100">
+        <button onclick="setFilterZone('3')" id="filter-btn-3" class="zone-pill-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-amber-700 border border-amber-200 hover:bg-amber-100">
           🟡 ปี 3 (4 โต๊ะ)
         </button>
-        <button onclick="setFilterZone('4')" id="filter-btn-4" class="zone-pill-btn px-3.5 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-rose-700 border border-rose-200 hover:bg-rose-100">
+        <button onclick="setFilterZone('4')" id="filter-btn-4" class="zone-pill-btn px-3 py-1.5 rounded-xl text-xs font-semibold transition bg-slate-50 text-rose-700 border border-rose-200 hover:bg-rose-100">
           🔴 ปี 4 (7 โต๊ะ)
         </button>
       </div>
 
-      <!-- Search Box -->
+      <!-- Live Search Box -->
       <div class="relative w-full md:w-72 shrink-0">
-        <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาโต๊ะ หรือชื่อ-สกุลผู้จอง..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition" />
+        <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="ค้นหาโต๊ะ หรือชื่อ-นามสกุล..." class="w-full pl-9 pr-3 py-1.5 bg-slate-50 border border-slate-300 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:bg-white transition" />
         <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
       </div>
     </div>
 
-
-    <div class="relative rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:p-6 lg:p-8 shadow-md overflow-x-auto">
+    <!-- Seating Layout Shell -->
+    <div class="relative rounded-3xl border border-slate-200 bg-slate-50 p-3 sm:p-6 lg:p-8 shadow-md overflow-x-auto">
 
       <!-- Top Parking (ที่จอดรถ) -->
-      <div class="w-full max-w-4xl mx-auto mb-6 py-2.5 px-6 rounded-full border-2 border-slate-300 bg-white text-center text-slate-700 font-bold text-sm tracking-widest flex items-center justify-center gap-2 shadow-sm">
+      <div class="w-full max-w-4xl mx-auto mb-6 py-2.5 px-6 rounded-full border-2 border-slate-300 bg-white text-center text-slate-700 font-bold text-xs sm:text-sm tracking-widest flex items-center justify-center gap-2 shadow-sm">
         <span>🚗</span> ที่จอดรถ (ด้านบน) <span>🅿️</span>
       </div>
 
-      <!-- Main Building Layout Shell -->
-      <div class="relative min-w-[940px] max-w-6xl mx-auto rounded-3xl border-2 border-slate-300 blueprint-white-bg p-5 sm:p-7 shadow-lg">
+      <!-- Main Building Floor Plan Blueprint -->
+      <div class="relative min-w-[920px] max-w-6xl mx-auto rounded-3xl border-2 border-slate-300 blueprint-white-bg p-5 sm:p-7 shadow-lg">
 
         <!-- Outer Parking Left / Right -->
         <div class="absolute -left-12 top-1/4 -bottom-1/4 w-9 hidden xl:flex flex-col items-center justify-center rounded-full border-2 border-slate-300 bg-white text-[11px] font-bold text-slate-600 py-6 tracking-widest shadow-sm" style="writing-mode: vertical-rl;">
@@ -175,17 +193,17 @@
               </svg>
             </div>
             <div class="px-4 py-1.5 rounded-xl border-2 border-teal-400 bg-teal-50 text-teal-900 text-xs font-extrabold flex items-center gap-2 shadow-sm">
-              <span>📋</span> โต๊ะลงทะเบียน (Registration)
+              <span>📋</span> โต๊ะลงทะเบียน (Registration Desk)
             </div>
           </div>
 
           <div class="text-xs text-slate-500 font-semibold bg-white px-3 py-1 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-            <span>ผัง 25 โต๊ะ (อัปเดตอัตโนมัติ Real-Time)</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span>ผัง 25 โต๊ะ (อัปเดตแบบเรียลไทม์ Real-Time)</span>
           </div>
         </div>
 
-        <!-- Middle Section: Left Wing, 5x5 Tables Center, Right Wing -->
+        <!-- Middle Floor: Left Wing, 5x5 Tables Center, Right Wing -->
         <div class="grid grid-cols-12 gap-4 items-stretch mb-6">
 
           <!-- Left Wing: ซุ้ม, เวทีดนตรี, โปรเจกเตอร์ -->
@@ -208,31 +226,29 @@
             </div>
 
             <!-- โปรเจกเตอร์ (Projector Screen) -->
-            <div class="p-3 rounded-2xl border-2 border-slate-300 bg-slate-50 text-center shadow-sm transform -rotate-3 hover:rotate-0 transition">
+            <div class="p-3 rounded-2xl border-2 border-slate-300 bg-slate-50 text-center shadow-sm transform -rotate-2 hover:rotate-0 transition">
               <div class="text-base">📽️</div>
               <div class="font-bold text-slate-800 text-xs">โปรเจกเตอร์</div>
               <div class="text-[9px] text-slate-500">Projector Screen</div>
             </div>
           </div>
 
-          <!-- Center Wing: 5x5 Tables Matrix -->
+          <!-- Center Wing: 5x5 Tables Matrix (25 Tables) -->
           <div class="col-span-8 bg-white/95 rounded-3xl border-2 border-slate-300 p-4 sm:p-5 relative shadow-sm">
-
-            <!-- Zone Indicator Legend -->
             <div class="text-xs font-bold text-slate-600 mb-3 flex flex-wrap items-center justify-between border-b border-slate-200 pb-2.5 gap-2">
               <div class="flex items-center gap-3 flex-wrap">
-                <span class="flex items-center gap-1 text-blue-600"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ปี 1 (11)</span>
-                <span class="flex items-center gap-1 text-teal-600"><span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-emerald-400"></span> ร่วม 1+2 (1)</span>
-                <span class="flex items-center gap-1 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ปี 2 (3)</span>
-                <span class="flex items-center gap-1 text-amber-600"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> ปี 3 (4)</span>
-                <span class="flex items-center gap-1 text-rose-600"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> ปี 4 (7)</span>
+                <span class="flex items-center gap-1 text-blue-600"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ปี 1 (11 โต๊ะ)</span>
+                <span class="flex items-center gap-1 text-teal-600"><span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-emerald-400"></span> ร่วม 1+2 (1 โต๊ะ)</span>
+                <span class="flex items-center gap-1 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ปี 2 (3 โต๊ะ)</span>
+                <span class="flex items-center gap-1 text-amber-600"><span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span> ปี 3 (4 โต๊ะ)</span>
+                <span class="flex items-center gap-1 text-rose-600"><span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span> ปี 4 (7 โต๊ะ)</span>
               </div>
-              <span class="text-[11px] text-slate-400">คลิกที่โต๊ะเพื่อจอง</span>
+              <span class="text-[11px] text-slate-400">คลิกที่โต๊ะเพื่อสำรองที่นั่ง</span>
             </div>
 
-            <!-- 5 Columns x 5 Rows Grid (25 tables) -->
-            <div id="blueprint-grid" class="grid grid-cols-5 gap-3 sm:gap-4 select-none">
-              <!-- Dynamically populated 25 tables -->
+            <!-- 5 Columns x 5 Rows Grid -->
+            <div id="blueprint-grid" class="grid grid-cols-5 gap-2.5 sm:gap-4 select-none">
+              <!-- Dynamically populated via JS -->
             </div>
           </div>
 
@@ -254,9 +270,9 @@
           </div>
         </div>
 
-        <!-- Bottom Amenities: Mala Zone, Wide Cashier Counter, Restrooms -->
+        <!-- Bottom Amenities: Mala Zone, Cashier Counter, Restrooms -->
         <div class="grid grid-cols-12 gap-4 items-stretch">
-          <!-- Bottom-left: โซนหม่าล่า (Mala Zone) -->
+          <!-- โซนหม่าล่า (Mala Zone) -->
           <div class="col-span-3 p-4 rounded-2xl border-2 border-amber-300 bg-amber-50 flex items-center justify-center gap-3 text-center shadow-sm">
             <span class="text-3xl">🍢</span>
             <div class="text-left">
@@ -265,7 +281,7 @@
             </div>
           </div>
 
-          <!-- Bottom-center: เคาน์เตอร์คิดเงิน (Cashier Counter - Wide) -->
+          <!-- เคาน์เตอร์คิดเงิน (Cashier Counter) -->
           <div class="col-span-6 p-4 rounded-2xl border-2 border-slate-300 bg-white flex items-center justify-center gap-4 text-center shadow-sm">
             <span class="text-3xl">💳</span>
             <div>
@@ -277,7 +293,7 @@
             <span class="text-3xl">🧾</span>
           </div>
 
-          <!-- Bottom-right: ห้องน้ำ (Restrooms) -->
+          <!-- ห้องน้ำ (Restrooms) -->
           <div class="col-span-3 p-4 rounded-2xl border-2 border-teal-300 bg-teal-50 flex items-center justify-center gap-3 text-center shadow-sm">
             <span class="text-3xl">🚻</span>
             <div class="text-left">
@@ -290,17 +306,17 @@
       </div>
     </div>
 
-
+    <!-- Attendees & Booked List -->
     <section class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
           <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>📋</span> รายชื่อผู้จองโต๊ะ (อัปเดตแบบเรียลไทม์ Real-Time)
+            <span>📋</span> รายนามผู้จองโต๊ะ (อัปเดตแบบเรียลไทม์ Real-Time)
           </h3>
-          <p class="text-xs text-slate-500">ข้อมูลเชื่อมต่อกับฐานข้อมูลกลาง เมื่อผู้อื่นจองหน้าจอจะอัปเดตโดยอัตโนมัติ</p>
+          <p class="text-xs text-slate-500">ข้อมูลเชื่อมต่อคลาวด์ เมื่อผู้อื่นจองหน้าจอของทุกคนจะอัปเดตให้ทันทีโดยอัตโนมัติ</p>
         </div>
         <div id="booking-badge-counter" class="px-3 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
-          --
+          จองแล้ว 0 / 25 โต๊ะ
         </div>
       </div>
 
@@ -311,7 +327,7 @@
               <th scope="col" class="px-4 py-3 rounded-l-xl">เลขโต๊ะ</th>
               <th scope="col" class="px-4 py-3">ชั้นปี / ประเภท</th>
               <th scope="col" class="px-4 py-3">ผู้ติดต่อหลัก & เบอร์โทร</th>
-              <th scope="col" class="px-4 py-3">สมาชิกผู้ร่วมโต๊ะ (ชื่อ-นามสกุล)</th>
+              <th scope="col" class="px-4 py-3">สมาชิกผู้ร่วมโต๊ะ (ชื่อ-นามสกุล ทั้ง 4 คน)</th>
               <th scope="col" class="px-4 py-3">เวลาที่จอง</th>
               <th scope="col" class="px-4 py-3 rounded-r-xl text-center">E-Ticket</th>
             </tr>
@@ -323,13 +339,12 @@
 
   </main>
 
-
   <!-- Booking Form Modal -->
   <div id="booking-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white border border-slate-200 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden my-6 flex flex-col">
       
       <!-- Modal Header -->
-      <div id="modal-header-bg" class="p-5 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-blue-50 via-indigo-50 to-white">
+      <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-gradient-to-r from-blue-50 via-indigo-50 to-white">
         <div class="flex items-center gap-3">
           <div class="w-12 h-12 rounded-2xl bg-white border border-slate-200 flex flex-col items-center justify-center font-extrabold text-slate-800 shadow-sm">
             <span class="text-[10px] text-slate-400">โต๊ะ</span>
@@ -351,12 +366,12 @@
       <!-- Form Body -->
       <form id="reservation-form" onsubmit="handleReservationSubmit(event)" class="p-5 sm:p-6 space-y-4 flex-1 overflow-y-auto max-h-[75vh]">
         <input type="hidden" id="form-table-id" value="">
-        <input type="hidden" id="form-table-type" value="standard">
+        <input type="hidden" id="form-table-type" value="full">
 
         <!-- Contact Phone -->
         <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 space-y-3">
           <div class="text-xs font-bold uppercase tracking-wider text-indigo-700 flex items-center gap-1.5">
-            <span>📱</span> ข้อมูลผู้ติดต่อหลัก
+            <span>📱</span> ข้อมูลผู้ติดต่อหลัก (ประสานงาน)
           </div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
@@ -374,22 +389,22 @@
         <div class="space-y-3">
           <div class="flex items-center justify-between">
             <h4 class="text-sm font-bold text-slate-800 flex items-center gap-1.5">
-              <span>👥</span> รายชื่อผู้ร่วมโต๊ะ (รวม 4 คน บังคับชื่อ-นามสกุล)
+              <span>👥</span> รายชื่อผู้ร่วมโต๊ะ (รวม 4 คน ต้องระบุทั้งชื่อและนามสกุล)
             </h4>
             <span class="text-[11px] text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded border border-amber-200 font-semibold">
-              * ต้องใส่ชื่อ-สกุลครบ
+              * บังคับ 4 คน
             </span>
           </div>
 
           <div id="guests-input-container" class="space-y-2.5">
-            <!-- Injected via JavaScript -->
+            <!-- Dynamic Form Inputs -->
           </div>
         </div>
 
         <!-- Note -->
         <div>
           <label class="block text-xs text-slate-600 mb-1 font-medium">หมายเหตุเพิ่มเติม (ถ้ามี)</label>
-          <input type="text" id="booking-note" placeholder="เช่น ทานมังสวิรัติ, นั่งเก้าอี้เสริม" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
+          <input type="text" id="booking-note" placeholder="เช่น ทานมังสวิรัติ, แพ้อาหาร, นั่งเก้าอี้เสริม" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" />
         </div>
 
         <!-- Error Alert Box -->
@@ -432,11 +447,59 @@
     </div>
   </div>
 
+  <!-- Cloud Online Settings Modal -->
+  <div id="config-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 w-full max-w-lg rounded-3xl shadow-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200">
+        <div class="flex items-center gap-2">
+          <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg border border-indigo-100">☁️</div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">ตั้งค่าฐานข้อมูลคลาวด์ออนไลน์ (Live Sync)</h3>
+            <p class="text-xs text-slate-500">สำหรับนำโค้ดไปขึ้นเว็บโฮสติ้งจริง (GitHub Pages, Vercel, etc.)</p>
+          </div>
+        </div>
+        <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-700">✕</button>
+      </div>
+
+      <div class="space-y-3 text-xs text-slate-600">
+        <p class="leading-relaxed">
+          ระบบนี้รองรับการเชื่อมต่อกับ <strong>Firebase Firestore</strong> เพื่อให้ทุกคนที่เปิดเว็บจากมือถือหรือคอมพิวเตอร์ต่างเครื่องเห็นข้อมูลอัปเดตแบบเรียลไทม์พร้อมกัน
+        </p>
+
+        <div>
+          <label class="block font-bold text-slate-700 mb-1">วาง Firebase Config (JSON หรือ JavaScript Object):</label>
+          <textarea id="custom-firebase-input" rows="6" placeholder='{
+  "apiKey": "AIzaSy...",
+  "authDomain": "your-app.firebaseapp.com",
+  "projectId": "your-app-id",
+  "storageBucket": "your-app.firebasestorage.app",
+  "messagingSenderId": "...",
+  "appId": "..."
+}' class="w-full p-3 font-mono text-xs bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:bg-white"></textarea>
+          <span class="text-[11px] text-slate-400 mt-1 block">* หากเว้นว่างไว้ ระบบจะใช้การเชื่อมต่อคลาวด์ที่กำหนดไว้ในสภาพแวดล้อมอัตโนมัติ</span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2 border-t border-slate-200">
+        <button onclick="clearCustomConfig()" class="text-xs text-rose-600 hover:underline">
+          ล้างค่าคลาวด์ที่บันทึก
+        </button>
+        <div class="flex gap-2">
+          <button onclick="closeConfigModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 transition">
+            ปิด
+          </button>
+          <button onclick="saveCustomConfig()" class="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-700 text-white transition shadow-sm">
+            บันทึกและเชื่อมต่อใหม่
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- Printable E-Ticket Modal -->
   <div id="ticket-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div id="printable-ticket" class="bg-white border border-slate-200 w-full max-w-md rounded-3xl shadow-2xl overflow-hidden my-6">
-      <div id="ticket-header-bg" class="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 p-6 text-white text-center relative">
+      <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-indigo-700 p-6 text-white text-center relative">
         <div class="text-[11px] uppercase font-extrabold tracking-widest text-blue-100">OFFICIAL RESERVATION PASS</div>
         <h2 class="text-2xl font-black mt-1">สำรองที่นั่งสำเร็จ!</h2>
         <p class="text-xs text-blue-100/90 mt-0.5">งานเลี้ยงสังสรรค์สานสัมพันธ์ประจำปี</p>
@@ -492,7 +555,7 @@
     </div>
   </div>
 
-  <!-- Toast Notification Alert -->
+  <!-- Toast Notification -->
   <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-semibold border">
     <span id="toast-icon">✅</span>
     <span id="toast-msg">ข้อความ</span>
@@ -506,14 +569,14 @@
         <h4 class="text-base font-bold text-slate-900">ต้องการล้างข้อมูลการจองทั้งหมด?</h4>
       </div>
       <p class="text-xs text-slate-600 leading-relaxed">
-        ข้อมูลการจองทุกโต๊ะในระบบฐานข้อมูลจะถูกล้าง ทุกเครื่องที่เปิดอยู่จะเห็นโต๊ะกลับมาว่างทันที
+        ข้อมูลการจองทุกโต๊ะในระบบฐานข้อมูลออนไลน์จะถูกลบออก ทุกอุปกรณ์ของผู้ใช้งานอื่นจะเห็นโต๊ะกลับมาว่างพร้อมกันทันที
       </p>
       <div class="flex items-center justify-end gap-2 pt-2">
         <button onclick="closeResetModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 bg-slate-100">
           ยกเลิก
         </button>
         <button onclick="confirmExecuteReset()" id="btn-confirm-reset" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm">
-          ยืนยันรีเซ็ต
+          ยืนยันล้างข้อมูล
         </button>
       </div>
     </div>
@@ -524,14 +587,13 @@
     <p>ระบบจองโต๊ะงานเลี้ยงคณะ • Real-Time Cloud Synchronization (ปี 1: 11 โต๊ะ | ร่วม 1+2: 1 โต๊ะ | ปี 2: 3 โต๊ะ | ปี 3: 4 โต๊ะ | ปี 4: 7 โต๊ะ)</p>
   </footer>
 
-
-  <!-- Firebase Integration Script (Module) -->
+  <!-- Firebase & Real-time Integration Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    // 25 Table Floor Layout Definition
+    // 25 Table Floor Layout Definition according to blueprint
     const GRID_TABLES = [
       // Row 1 (Top)
       { id: 'T1-01', row: 1, col: 1, zone: '1', zoneName: 'โซนปี 1', capacity: 4, type: 'full', label: 'Y1-01', desc: 'ปี 1 แถว 1 ริมซ้าย' },
@@ -578,12 +640,12 @@
     let activeFilter = 'ALL';
     let currentSearchTerm = '';
     let isInitialLoad = true;
+    let unsubscribeFirestore = null;
 
-    // App and Firestore Paths
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'table-booking-sync-app';
+    // App ID & Firestore Path definition
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'table-reservation-prod-app';
     const COLLECTION_NAME = 'reservations';
 
-    // Get public collection reference
     function getReservationsCollection() {
       return collection(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME);
     }
@@ -592,27 +654,67 @@
       return doc(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME, docId);
     }
 
+    // Play subtle soft ding notification using Web Audio API
+    function playNotificationSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        osc.frequency.exponentialRampToValueAtTime(880.00, audioCtx.currentTime + 0.15); // A5
+        gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.5);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.5);
+      } catch (e) {}
+    }
 
-    async function initFirebase() {
+    async function initializeCloudSync() {
       const syncText = document.getElementById('sync-status-text');
       const syncBadge = document.getElementById('sync-status-badge');
 
-      try {
-        if (typeof __firebase_config === 'undefined') {
-          console.warn('Firebase config is not found in environment, fallback to demo local storage.');
-          syncText.textContent = 'โหมดออฟไลน์ (Local Demo)';
-          syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200';
-          loadLocalFallback();
-          renderGrid();
-          return;
-        }
+      if (unsubscribeFirestore) {
+        unsubscribeFirestore();
+        unsubscribeFirestore = null;
+      }
 
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
+      // Check for user-provided custom Firebase config in localStorage first
+      let firebaseConfig = null;
+      const customConfigStr = localStorage.getItem('custom_firebase_config');
+      if (customConfigStr) {
+        try {
+          firebaseConfig = JSON.parse(customConfigStr);
+          document.getElementById('custom-firebase-input').value = customConfigStr;
+        } catch (e) {
+          console.warn('Invalid custom config format', e);
+        }
+      }
+
+      // Fallback to environment injected config
+      if (!firebaseConfig && typeof __firebase_config !== 'undefined') {
+        try {
+          firebaseConfig = JSON.parse(__firebase_config);
+        } catch (e) {}
+      }
+
+      if (!firebaseConfig) {
+        syncText.textContent = 'โหมดออฟไลน์ (Local Demo)';
+        syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200';
+        loadLocalFallback();
+        renderGrid();
+        return;
+      }
+
+      try {
+        syncText.textContent = 'กำลังเชื่อมต่อคลาวด์...';
+        const app = initializeApp(firebaseConfig, 'table-booking-sync-prod');
         db = getFirestore(app);
         auth = getAuth(app);
 
-        // Authenticate first before any Firestore operations
+        // Required auth step before queries
         if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
           await signInWithCustomToken(auth, __initial_auth_token);
         } else {
@@ -620,34 +722,32 @@
         }
 
         currentUser = auth.currentUser;
-        console.log('Firebase Authenticated:', currentUser?.uid);
-
-        syncText.textContent = '🟢 ซิงค์ข้อมูลสด (Real-time)';
+        syncText.textContent = '🟢 ซิงค์สดออนไลน์ (Live Real-Time)';
         syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
 
         // Listen in real-time to the public reservations collection
         const q = getReservationsCollection();
-        onSnapshot(q, (snapshot) => {
+        unsubscribeFirestore = onSnapshot(q, (snapshot) => {
           const newReservations = {};
           snapshot.forEach((docSnap) => {
-            const data = docSnap.data();
-            newReservations[docSnap.id] = data;
+            newReservations[docSnap.id] = docSnap.data();
           });
 
-          // Detect new reservations from other users to display a notification
+          // Detect new reservations from other users
           if (!isInitialLoad) {
             const oldKeys = Object.keys(reservations);
             const newKeys = Object.keys(newReservations);
             const newlyBooked = newKeys.filter(k => !oldKeys.includes(k));
             if (newlyBooked.length > 0) {
               const tableInfo = newReservations[newlyBooked[0]];
-              showToast(`โต๊ะ ${tableInfo?.label || newlyBooked[0]} เพิ่งถูกจองโดยผู้ใช้อื่น!`, 'info');
-              
-              // If user had the modal open for this specific table, close it
-              const openModalTableId = document.getElementById('form-table-id').value;
-              if (openModalTableId && newlyBooked.includes(openModalTableId)) {
+              playNotificationSound();
+              showToast(`📢 โต๊ะ ${tableInfo?.label || newlyBooked[0]} เพิ่งถูกจองโดยผู้ใช้อื่น!`, 'info');
+
+              // If this user was looking at the form for this table, alert & close
+              const openTableId = document.getElementById('form-table-id').value;
+              if (openTableId && newlyBooked.includes(openTableId)) {
                 closeBookingModal();
-                showToast(`โต๊ะ ${tableInfo?.label || openModalTableId} ถูกผู้อื่นจองตัดหน้าไปแล้ว`, 'error');
+                showToast(`โต๊ะ ${tableInfo?.label || openTableId} ถูกผู้อื่นจองตัดหน้าไปแล้ว กรุณาเลือกโต๊ะอื่น`, 'error');
               }
             }
           }
@@ -655,14 +755,14 @@
           reservations = newReservations;
           isInitialLoad = false;
           renderGrid();
-        }, (error) => {
-          console.error('Realtime listener error:', error);
-          syncText.textContent = 'การเชื่อมต่อขัดข้อง';
+        }, (err) => {
+          console.error('Realtime sync error:', err);
+          syncText.textContent = 'เชื่อมต่อขัดข้อง (กรุณาตรวจสอบการตั้งค่า)';
           syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200';
         });
 
       } catch (err) {
-        console.error('Firebase init failed:', err);
+        console.error('Firebase setup failed:', err);
         syncText.textContent = 'โหมดออฟไลน์';
         syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200';
         loadLocalFallback();
@@ -683,7 +783,6 @@
       } catch (e) {}
     }
 
-
     function renderGrid() {
       const grid = document.getElementById('blueprint-grid');
       if (!grid) return;
@@ -699,10 +798,8 @@
           bookedSeats += table.capacity;
         }
 
-        // Check zone filter
         const matchZone = activeFilter === 'ALL' || table.zone === activeFilter;
 
-        // Check search filter
         let matchSearch = true;
         if (currentSearchTerm) {
           const s = currentSearchTerm.toLowerCase();
@@ -717,10 +814,9 @@
         grid.appendChild(cell);
       });
 
-      // Update counters
       const totalTables = GRID_TABLES.length;
-      document.getElementById('stat-tables-free').textContent = `${totalTables - bookedCount} โต๊ะ`;
-      document.getElementById('stat-tables-booked').textContent = `${bookedCount} โต๊ะ`;
+      document.getElementById('stat-tables-free').textContent = `${totalTables - bookedCount}`;
+      document.getElementById('stat-tables-booked').textContent = `${bookedCount}`;
       document.getElementById('stat-seats-booked').textContent = `${bookedSeats}/100`;
       document.getElementById('booking-badge-counter').textContent = `จองแล้ว ${bookedCount} / ${totalTables} โต๊ะ (${bookedSeats} ที่นั่ง)`;
 
@@ -732,13 +828,12 @@
       const isJoint = table.type === 'joint';
       const visibilityClass = isVisible ? 'opacity-100 scale-100' : 'opacity-20 grayscale pointer-events-none scale-95';
 
-      wrap.className = `flex flex-col items-center justify-center p-2 rounded-2xl transition-all duration-200 ${visibilityClass}`;
+      wrap.className = `flex flex-col items-center justify-center p-1.5 sm:p-2 rounded-2xl transition-all duration-200 ${visibilityClass}`;
 
       const circleBtn = document.createElement('button');
       circleBtn.type = 'button';
 
       if (isBooked) {
-        // Booked: Red locked styling
         circleBtn.className = `w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-rose-400 bg-rose-50 shadow-sm flex flex-col items-center justify-center text-rose-700 hover:scale-105 transition cursor-pointer relative group`;
         circleBtn.onclick = () => openOccupiedModal(table.id);
 
@@ -748,7 +843,6 @@
           <span class="text-[9px] text-rose-600 font-semibold">จองแล้ว</span>
         `;
       } else {
-        // Available Table
         let bgStyle = 'bg-white';
         let borderStyle = getZoneBorderColor(table.zone);
 
@@ -799,7 +893,7 @@
       }
     }
 
-
+    // Reservation Submit with Validation & Race-Condition Lock
     window.handleReservationSubmit = async function(e) {
       e.preventDefault();
       hideFormError();
@@ -812,9 +906,9 @@
       const submitBtn = document.getElementById('btn-submit-booking');
       const submitText = document.getElementById('btn-submit-text');
 
-      // Real-time lock check
+      // Guard: already booked in real-time
       if (reservations[tableId]) {
-        showFormError('โต๊ะนี้เพิ่งมีผู้ใช้อื่นจองไปแล้ว กรุณาเลือกโต๊ะอื่น');
+        showFormError('ขออภัย โต๊ะนี้เพิ่งมีผู้ใช้อื่นกดจองตัดหน้าไปแล้ว กรุณาเลือกโต๊ะว่างโต๊ะอื่น');
         return;
       }
 
@@ -823,14 +917,14 @@
         return;
       }
 
-      // Validate all 4 guests have first name & last name
+      // Check all 4 guest inputs
       const guests = [];
       for (let i = 1; i <= 4; i++) {
         const first = document.getElementById(`guest-${i}-first`).value.trim();
         const last = document.getElementById(`guest-${i}-last`).value.trim();
 
         if (!first || !last) {
-          showFormError(`กรุณากรอกทั้งชื่อและนามสกุลของสมาชิกคนที่ ${i} ให้ครบถ้วน`);
+          showFormError(`กรุณากรอกทั้งชื่อจริงและนามสกุลของสมาชิกคนที่ ${i} ให้ครบถ้วน`);
           return;
         }
         if (first.length < 2 || last.length < 2) {
@@ -864,19 +958,17 @@
         note,
         bookingId,
         bookedAt,
-        createdBy: currentUser ? currentUser.uid : 'anonymous',
+        createdBy: currentUser ? currentUser.uid : 'online-user',
         createdAt: Date.now()
       };
 
       try {
         submitBtn.disabled = true;
-        submitText.textContent = 'กำลังบันทึกลงระบบ...';
+        submitText.textContent = 'กำลังบันทึกลงระบบคลาวด์...';
 
         if (db && currentUser) {
-          // Write to Firestore - All other connected browsers will update automatically
           await setDoc(getReservationDoc(tableId), bookingRecord);
         } else {
-          // Fallback
           reservations[tableId] = bookingRecord;
           saveLocalFallback();
           renderGrid();
@@ -895,7 +987,7 @@
       }
     };
 
-    // Reset All Reservations from Database
+    // Reset All Reservations
     window.confirmExecuteReset = async function() {
       const resetBtn = document.getElementById('btn-confirm-reset');
       try {
@@ -914,17 +1006,17 @@
         }
 
         closeResetModal();
-        showToast('รีเซ็ตสถานะโต๊ะทั้งหมดในเซิร์ฟเวอร์เรียบร้อยแล้ว', 'info');
+        showToast('ล้างข้อมูลการจองทั้งหมดบนคลาวด์เรียบร้อยแล้ว', 'info');
       } catch (err) {
         console.error('Reset error:', err);
-        showToast('ไม่สามารถรีเซ็ตได้ กรุณาลองใหม่', 'error');
+        showToast('ไม่สามารถล้างข้อมูลได้ กรุณาลองใหม่', 'error');
       } finally {
         resetBtn.disabled = false;
-        resetBtn.textContent = 'ยืนยันรีเซ็ต';
+        resetBtn.textContent = 'ยืนยันล้างข้อมูล';
       }
     };
 
-    // Modal and View Helpers
+    // Modal Helpers
     window.openBookingModal = function(table) {
       document.getElementById('modal-table-id').textContent = table.label;
       document.getElementById('modal-table-desc').textContent = `${table.zoneName} • ${table.desc}`;
@@ -939,7 +1031,7 @@
 
       if (table.type === 'joint') {
         container.innerHTML = `
-          <div class="p-3 bg-blue-50/70 rounded-2xl border border-blue-200 space-y-2.5">
+          <div class="p-3 bg-blue-50/80 rounded-2xl border border-blue-200 space-y-2.5">
             <div class="flex items-center justify-between text-xs font-extrabold text-blue-900">
               <span class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-blue-600"></span> โควตานักศึกษา ปี 1 (2 ท่าน)
@@ -966,7 +1058,7 @@
             </div>
           </div>
 
-          <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2.5">
+          <div class="p-3 bg-emerald-50/80 rounded-2xl border border-emerald-200 space-y-2.5">
             <div class="flex items-center justify-between text-xs font-extrabold text-emerald-900">
               <span class="flex items-center gap-1.5">
                 <span class="w-2 h-2 rounded-full bg-emerald-600"></span> โควตานักศึกษา ปี 2 (2 ท่าน)
@@ -1215,6 +1307,85 @@
       document.getElementById('confirm-reset-modal').classList.add('hidden');
     };
 
+    // Cloud Online Config Modal Controls
+    window.openConfigModal = function() {
+      document.getElementById('config-modal').classList.remove('hidden');
+    };
+
+    window.closeConfigModal = function() {
+      document.getElementById('config-modal').classList.add('hidden');
+    };
+
+    window.saveCustomConfig = function() {
+      const val = document.getElementById('custom-firebase-input').value.trim();
+      if (val) {
+        try {
+          JSON.parse(val);
+          localStorage.setItem('custom_firebase_config', val);
+          showToast('บันทึกการตั้งค่าคลาวด์แล้ว กำลังเชื่อมต่อใหม่...', 'success');
+          closeConfigModal();
+          setTimeout(() => initializeCloudSync(), 500);
+        } catch (e) {
+          alert('รูปแบบ JSON ของ Firebase Config ไม่ถูกต้อง กรุณาตรวจสอบปีกกาและเครื่องหมายคำพูด');
+        }
+      } else {
+        localStorage.removeItem('custom_firebase_config');
+        closeConfigModal();
+        initializeCloudSync();
+      }
+    };
+
+    window.clearCustomConfig = function() {
+      localStorage.removeItem('custom_firebase_config');
+      document.getElementById('custom-firebase-input').value = '';
+      showToast('ล้างการตั้งค่าคลาวด์ที่บันทึกแล้ว', 'info');
+      closeConfigModal();
+      initializeCloudSync();
+    };
+
+    // Export attendees to Excel/CSV with UTF-8 BOM
+    window.exportToCSV = function() {
+      const tableIds = Object.keys(reservations);
+      if (tableIds.length === 0) {
+        showToast('ยังไม่มีข้อมูลการจองสำหรับส่งออก', 'info');
+        return;
+      }
+
+      let csv = '\uFEFF'; // UTF-8 BOM for Excel in Thai
+      csv += 'หมายเลขโต๊ะ,โซนชั้นปี,ลำดับ,ชื่อจริง,นามสกุล,หมายเหตุ,เบอร์โทรศัพท์ติดต่อ,รหัสนักศึกษา,รหัสการจอง,เวลาที่จอง\n';
+
+      tableIds.forEach(id => {
+        const res = reservations[id];
+        if (res.guests && res.guests.length) {
+          res.guests.forEach((g, idx) => {
+            const row = [
+              `"${res.label}"`,
+              `"${res.zoneName}"`,
+              idx + 1,
+              `"${g.first}"`,
+              `"${g.last}"`,
+              `"${g.note || ''}"`,
+              `"${res.phone}"`,
+              `"${res.studentId || ''}"`,
+              `"${res.bookingId}"`,
+              `"${res.bookedAt || ''}"`
+            ];
+            csv += row.join(',') + '\n';
+          });
+        }
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `รายชื่อผู้จองโต๊ะ_${new Date().toISOString().slice(0,10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('ส่งออกไฟล์ CSV สำเร็จแล้ว', 'success');
+    };
+
     function formatPhone(p) {
       if (!p || p.length < 9) return p;
       if (p.length === 10) return `${p.substring(0, 3)}-${p.substring(3, 6)}-${p.substring(6)}`;
@@ -1253,13 +1424,13 @@
       if (e.target === document.getElementById('booking-modal')) closeBookingModal();
       if (e.target === document.getElementById('occupied-modal')) closeOccupiedModal();
       if (e.target === document.getElementById('ticket-modal')) closeTicketModal();
+      if (e.target === document.getElementById('config-modal')) closeConfigModal();
       if (e.target === document.getElementById('confirm-reset-modal')) closeResetModal();
     });
 
-    // Start App & Live Sync
     window.addEventListener('DOMContentLoaded', () => {
       renderGrid();
-      initFirebase();
+      initializeCloudSync();
     });
   </script>
 </body>
