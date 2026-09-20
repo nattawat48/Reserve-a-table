@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ระบบจองโต๊ะงานเลี้ยงคณะ - ผังที่นั่งตามแปลนจริง</title>
+  <title>ระบบจองโต๊ะงานเลี้ยงคณะ - ซิงค์ข้อมูลสดแบบเรียลไทม์ (Real-time)</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
@@ -58,6 +58,7 @@
 
 <body class="bg-[#f8fafc] text-slate-800 min-h-screen font-sans flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
 
+  <!-- Header with Live Sync Status -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3">
@@ -69,8 +70,10 @@
             <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight">
               ผังจองโต๊ะงานเลี้ยงสังสรรค์
             </h1>
-            <span class="px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-              ผังแปลน 5x5 (25 โต๊ะ)
+            <!-- Live Indicator Badge -->
+            <span id="sync-status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+              <span id="sync-status-text">กำลังเชื่อมต่อฐานข้อมูล...</span>
             </span>
           </div>
           <p class="text-xs text-slate-500">
@@ -97,7 +100,7 @@
           </div>
         </div>
 
-        <button onclick="promptResetAll()" class="px-3.5 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 transition flex items-center gap-1.5 shrink-0 shadow-sm">
+        <button onclick="promptResetAll()" class="px-3.5 py-2 text-xs font-semibold text-rose-600 bg-rose-50 hover:bg-rose-100 rounded-xl border border-rose-200 transition flex items-center gap-1.5 shrink-0 shadow-sm" title="ล้างการจองทั้งหมดในเซิร์ฟเวอร์">
           <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
@@ -106,6 +109,7 @@
       </div>
     </div>
   </header>
+
 
   <main class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
 
@@ -142,6 +146,7 @@
       </div>
     </div>
 
+
     <div class="relative rounded-3xl border border-slate-200 bg-slate-50 p-4 sm:p-6 lg:p-8 shadow-md overflow-x-auto">
 
       <!-- Top Parking (ที่จอดรถ) -->
@@ -152,7 +157,7 @@
       <!-- Main Building Layout Shell -->
       <div class="relative min-w-[940px] max-w-6xl mx-auto rounded-3xl border-2 border-slate-300 blueprint-white-bg p-5 sm:p-7 shadow-lg">
 
-        <!-- Outer Parking Left / Right (Visual Pills) -->
+        <!-- Outer Parking Left / Right -->
         <div class="absolute -left-12 top-1/4 -bottom-1/4 w-9 hidden xl:flex flex-col items-center justify-center rounded-full border-2 border-slate-300 bg-white text-[11px] font-bold text-slate-600 py-6 tracking-widest shadow-sm" style="writing-mode: vertical-rl;">
           🚗 ที่จอดรถ ฝั่งซ้าย 🅿️
         </div>
@@ -162,7 +167,6 @@
 
         <!-- Upper Interior: Entrance & Registration Desk -->
         <div class="flex items-center justify-between mb-5 px-2">
-          <!-- Entrance + Registration -->
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 border-2 border-emerald-400 rounded-xl text-emerald-800 text-xs font-bold shadow-sm animate-pulse">
               <span>👉 ทางเข้า (Entrance)</span>
@@ -176,7 +180,8 @@
           </div>
 
           <div class="text-xs text-slate-500 font-semibold bg-white px-3 py-1 rounded-xl border border-slate-200 shadow-sm flex items-center gap-1.5">
-            <span>ผัง 25 โต๊ะตามแปลนห้อง</span>
+            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+            <span>ผัง 25 โต๊ะ (อัปเดตอัตโนมัติ Real-Time)</span>
           </div>
         </div>
 
@@ -215,7 +220,7 @@
 
             <!-- Zone Indicator Legend -->
             <div class="text-xs font-bold text-slate-600 mb-3 flex flex-wrap items-center justify-between border-b border-slate-200 pb-2.5 gap-2">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-3 flex-wrap">
                 <span class="flex items-center gap-1 text-blue-600"><span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span> ปี 1 (11)</span>
                 <span class="flex items-center gap-1 text-teal-600"><span class="w-2.5 h-2.5 rounded-full bg-gradient-to-r from-blue-400 to-emerald-400"></span> ร่วม 1+2 (1)</span>
                 <span class="flex items-center gap-1 text-emerald-600"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span> ปี 2 (3)</span>
@@ -283,17 +288,16 @@
         </div>
 
       </div>
-      <!-- End of Main Building Layout Shell -->
-
     </div>
+
 
     <section class="bg-white rounded-3xl border border-slate-200 p-5 sm:p-6 shadow-sm space-y-4">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200">
         <div>
           <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>📋</span> รายชื่อผู้จองโต๊ะ (อัปเดตทันที)
+            <span>📋</span> รายชื่อผู้จองโต๊ะ (อัปเดตแบบเรียลไทม์ Real-Time)
           </h3>
-          <p class="text-xs text-slate-500">ระบบป้องกันการจองซ้ำอัตโนมัติ และสามารถออกบัตร E-Ticket ได้</p>
+          <p class="text-xs text-slate-500">ข้อมูลเชื่อมต่อกับฐานข้อมูลกลาง เมื่อผู้อื่นจองหน้าจอจะอัปเดตโดยอัตโนมัติ</p>
         </div>
         <div id="booking-badge-counter" class="px-3 py-1 rounded-xl bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200">
           --
@@ -319,6 +323,8 @@
 
   </main>
 
+
+  <!-- Booking Form Modal -->
   <div id="booking-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
     <div class="bg-white border border-slate-200 w-full max-w-xl rounded-3xl shadow-2xl overflow-hidden my-6 flex flex-col">
       
@@ -398,13 +404,14 @@
             ยกเลิก
           </button>
           <button type="submit" id="btn-submit-booking" class="px-6 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-200 transition flex items-center gap-2">
-            <span>ยืนยันการจองโต๊ะ</span> 🔒
+            <span id="btn-submit-text">ยืนยันการจองโต๊ะ</span> 🔒
           </button>
         </div>
       </form>
     </div>
   </div>
 
+  <!-- Occupied Table Modal -->
   <div id="occupied-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
     <div class="bg-white border border-rose-200 w-full max-w-md rounded-3xl shadow-xl p-6 relative">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200">
@@ -424,6 +431,7 @@
       </div>
     </div>
   </div>
+
 
   <!-- Printable E-Ticket Modal -->
   <div id="ticket-modal" class="fixed inset-0 z-50 hidden bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 overflow-y-auto">
@@ -498,13 +506,13 @@
         <h4 class="text-base font-bold text-slate-900">ต้องการล้างข้อมูลการจองทั้งหมด?</h4>
       </div>
       <p class="text-xs text-slate-600 leading-relaxed">
-        ข้อมูลการจองทุกโต๊ะจะถูกรีเซ็ตให้เป็นโต๊ะว่าง คุณแน่ใจหรือไม่?
+        ข้อมูลการจองทุกโต๊ะในระบบฐานข้อมูลจะถูกล้าง ทุกเครื่องที่เปิดอยู่จะเห็นโต๊ะกลับมาว่างทันที
       </p>
       <div class="flex items-center justify-end gap-2 pt-2">
         <button onclick="closeResetModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:text-slate-800 bg-slate-100">
           ยกเลิก
         </button>
-        <button onclick="confirmExecuteReset()" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm">
+        <button onclick="confirmExecuteReset()" id="btn-confirm-reset" class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm">
           ยืนยันรีเซ็ต
         </button>
       </div>
@@ -513,19 +521,17 @@
 
   <!-- Footer -->
   <footer class="border-t border-slate-200 bg-white py-5 text-center text-xs text-slate-500 mt-8">
-    <p>ระบบจองโต๊ะงานเลี้ยงคณะ • ออกแบบตามผังอาคารจริง (ปี 1: 11 โต๊ะ | ร่วม 1+2: 1 โต๊ะ | ปี 2: 3 โต๊ะ | ปี 3: 4 โต๊ะ | ปี 4: 7 โต๊ะ)</p>
+    <p>ระบบจองโต๊ะงานเลี้ยงคณะ • Real-Time Cloud Synchronization (ปี 1: 11 โต๊ะ | ร่วม 1+2: 1 โต๊ะ | ปี 2: 3 โต๊ะ | ปี 3: 4 โต๊ะ | ปี 4: 7 โต๊ะ)</p>
   </footer>
 
-  <script>
-    /**
-     * 5x5 Grid Table Allocation according to exact floor requirements:
-     * - Year 1 (ปี 1): 11 full tables (4 guests each)
-     * - Joint Table (ปี 1+ปี 2): 1 full table at Row 1 Col 4 (2 guests from Year 1 + 2 guests from Year 2)
-     * - Year 2 (ปี 2): 3 full tables: Y2-01, Y2-02, Y2-03 (4 guests each)
-     * - Year 3 (ปี 3): 4 full tables: Y3-01, Y3-02, Y3-03, Y3-04 (4 guests each - includes former Y2-04 at Row 4 Col 5)
-     * - Year 4 (ปี 4): 7 full tables: Y4-01 to Y4-07 (4 guests each)
-     * Total: 25 physical tables x 4 persons = 100 seats total.
-     */
+
+  <!-- Firebase Integration Script (Module) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, deleteDoc, onSnapshot, collection } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    // 25 Table Floor Layout Definition
     const GRID_TABLES = [
       // Row 1 (Top)
       { id: 'T1-01', row: 1, col: 1, zone: '1', zoneName: 'โซนปี 1', capacity: 4, type: 'full', label: 'Y1-01', desc: 'ปี 1 แถว 1 ริมซ้าย' },
@@ -553,7 +559,6 @@
       { id: 'T4-02', row: 4, col: 2, zone: '4', zoneName: 'โซนปี 4', capacity: 4, type: 'full', label: 'Y4-02', desc: 'ปี 4 บายเนียร์' },
       { id: 'T4-03', row: 4, col: 3, zone: '4', zoneName: 'โซนปี 4', capacity: 4, type: 'full', label: 'Y4-03', desc: 'ปี 4 บายเนียร์' },
       { id: 'T4-04', row: 4, col: 4, zone: '4', zoneName: 'โซนปี 4', capacity: 4, type: 'full', label: 'Y4-04', desc: 'ปี 4 บายเนียร์' },
-      // Row 4 Col 5 is now assigned to Year 3 (previously was Y2-04)
       { id: 'T3-01', row: 4, col: 5, zone: '3', zoneName: 'โซนปี 3', capacity: 4, type: 'full', label: 'Y3-01', desc: 'ปี 3 แถว 4 ริมขวา' },
 
       // Row 5 (Bottom)
@@ -564,57 +569,124 @@
       { id: 'T3-03', row: 5, col: 5, zone: '3', zoneName: 'โซนปี 3', capacity: 4, type: 'full', label: 'Y3-03', desc: 'ปี 3 แถว 5 ริมขวา' }
     ];
 
-    const STORAGE_KEY = 'byenior_plan_clean_white_v3';
+    window.GRID_TABLES = GRID_TABLES;
+
+    let db = null;
+    let auth = null;
+    let currentUser = null;
     let reservations = {};
     let activeFilter = 'ALL';
     let currentSearchTerm = '';
+    let isInitialLoad = true;
 
-    // Load from localStorage
-    function loadReservations() {
+    // App and Firestore Paths
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'table-booking-sync-app';
+    const COLLECTION_NAME = 'reservations';
+
+    // Get public collection reference
+    function getReservationsCollection() {
+      return collection(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME);
+    }
+
+    function getReservationDoc(docId) {
+      return doc(db, 'artifacts', appId, 'public', 'data', COLLECTION_NAME, docId);
+    }
+
+
+    async function initFirebase() {
+      const syncText = document.getElementById('sync-status-text');
+      const syncBadge = document.getElementById('sync-status-badge');
+
       try {
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-          reservations = JSON.parse(saved);
-        } else {
-          // Pre-populate realistic initial booking
-          reservations = {
-            'T4-01': {
-              tableId: 'T4-01',
-              label: 'Y4-01',
-              zone: '4',
-              zoneName: 'โซนปี 4',
-              capacity: 4,
-              phone: '0812345678',
-              studentId: '63102034',
-              guests: [
-                { first: 'กิตติศักดิ์', last: 'เจริญโชค', note: 'ปี 4' },
-                { first: 'ปวีณา', last: 'แก้วมณี', note: 'ปี 4' },
-                { first: 'นรินทร์', last: 'พงศ์ไพโรจน์', note: 'ปี 4' },
-                { first: 'ศิริลักษณ์', last: 'สุขเกษม', note: 'ปี 4' }
-              ],
-              note: 'โต๊ะบายเนียร์หน้าเวที',
-              bookingId: 'BK-Y401-921',
-              bookedAt: '20/09/2026 18:30 น.'
-            }
-          };
-          saveReservations();
+        if (typeof __firebase_config === 'undefined') {
+          console.warn('Firebase config is not found in environment, fallback to demo local storage.');
+          syncText.textContent = 'โหมดออฟไลน์ (Local Demo)';
+          syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200';
+          loadLocalFallback();
+          renderGrid();
+          return;
         }
+
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        db = getFirestore(app);
+        auth = getAuth(app);
+
+        // Authenticate first before any Firestore operations
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+          await signInWithCustomToken(auth, __initial_auth_token);
+        } else {
+          await signInAnonymously(auth);
+        }
+
+        currentUser = auth.currentUser;
+        console.log('Firebase Authenticated:', currentUser?.uid);
+
+        syncText.textContent = '🟢 ซิงค์ข้อมูลสด (Real-time)';
+        syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200';
+
+        // Listen in real-time to the public reservations collection
+        const q = getReservationsCollection();
+        onSnapshot(q, (snapshot) => {
+          const newReservations = {};
+          snapshot.forEach((docSnap) => {
+            const data = docSnap.data();
+            newReservations[docSnap.id] = data;
+          });
+
+          // Detect new reservations from other users to display a notification
+          if (!isInitialLoad) {
+            const oldKeys = Object.keys(reservations);
+            const newKeys = Object.keys(newReservations);
+            const newlyBooked = newKeys.filter(k => !oldKeys.includes(k));
+            if (newlyBooked.length > 0) {
+              const tableInfo = newReservations[newlyBooked[0]];
+              showToast(`โต๊ะ ${tableInfo?.label || newlyBooked[0]} เพิ่งถูกจองโดยผู้ใช้อื่น!`, 'info');
+              
+              // If user had the modal open for this specific table, close it
+              const openModalTableId = document.getElementById('form-table-id').value;
+              if (openModalTableId && newlyBooked.includes(openModalTableId)) {
+                closeBookingModal();
+                showToast(`โต๊ะ ${tableInfo?.label || openModalTableId} ถูกผู้อื่นจองตัดหน้าไปแล้ว`, 'error');
+              }
+            }
+          }
+
+          reservations = newReservations;
+          isInitialLoad = false;
+          renderGrid();
+        }, (error) => {
+          console.error('Realtime listener error:', error);
+          syncText.textContent = 'การเชื่อมต่อขัดข้อง';
+          syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-rose-50 text-rose-700 border border-rose-200';
+        });
+
       } catch (err) {
-        console.error('Failed to load reservations:', err);
-        reservations = {};
+        console.error('Firebase init failed:', err);
+        syncText.textContent = 'โหมดออฟไลน์';
+        syncBadge.className = 'inline-flex items-center gap-1.5 px-2.5 py-0.5 text-[11px] font-bold rounded-full bg-slate-100 text-slate-600 border border-slate-200';
+        loadLocalFallback();
+        renderGrid();
       }
     }
 
-    function saveReservations() {
+    function loadLocalFallback() {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(reservations));
-      } catch (err) {
-        console.error('Failed to save reservations:', err);
-      }
+        const saved = localStorage.getItem('table_booking_fallback');
+        if (saved) reservations = JSON.parse(saved);
+      } catch (e) {}
     }
+
+    function saveLocalFallback() {
+      try {
+        localStorage.setItem('table_booking_fallback', JSON.stringify(reservations));
+      } catch (e) {}
+    }
+
 
     function renderGrid() {
       const grid = document.getElementById('blueprint-grid');
+      if (!grid) return;
       grid.innerHTML = '';
 
       let bookedCount = 0;
@@ -627,16 +699,16 @@
           bookedSeats += table.capacity;
         }
 
-        // Check filter
+        // Check zone filter
         const matchZone = activeFilter === 'ALL' || table.zone === activeFilter;
 
-        // Check search
+        // Check search filter
         let matchSearch = true;
         if (currentSearchTerm) {
           const s = currentSearchTerm.toLowerCase();
           const matchTable = table.label.toLowerCase().includes(s) || table.id.toLowerCase().includes(s);
           const res = reservations[table.id];
-          const matchGuest = res && res.guests.some(g => (g.first + ' ' + g.last).toLowerCase().includes(s));
+          const matchGuest = res && res.guests && res.guests.some(g => (g.first + ' ' + g.last).toLowerCase().includes(s));
           matchSearch = matchTable || matchGuest;
         }
 
@@ -727,121 +799,8 @@
       }
     }
 
-    function openBookingModal(table) {
-      document.getElementById('modal-table-id').textContent = table.label;
-      document.getElementById('modal-table-desc').textContent = `${table.zoneName} • ${table.desc}`;
-      document.getElementById('form-table-id').value = table.id;
-      document.getElementById('form-table-type').value = table.type;
 
-      const badge = document.getElementById('modal-capacity-badge');
-      badge.textContent = `${table.capacity} ท่าน (${table.type === 'joint' ? 'ปี 1 [2 คน] + ปี 2 [2 คน]' : 'โต๊ะเต็ม'})`;
-
-      const container = document.getElementById('guests-input-container');
-      container.innerHTML = '';
-
-      if (table.type === 'joint') {
-        // Special Joint Table: 2 inputs for Year 1 + 2 inputs for Year 2
-        container.innerHTML = `
-          <!-- Section Year 1 (2 Persons) -->
-          <div class="p-3 bg-blue-50/70 rounded-2xl border border-blue-200 space-y-2.5">
-            <div class="flex items-center justify-between text-xs font-extrabold text-blue-900">
-              <span class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-blue-600"></span> โควตานักศึกษา ปี 1 (2 ท่าน)
-              </span>
-              <span class="text-[10px] text-blue-700 font-semibold">* บังคับชื่อ-นามสกุล</span>
-            </div>
-            
-            <div class="space-y-2">
-              <div class="p-2 bg-white rounded-xl border border-blue-100">
-                <span class="text-[11px] font-bold text-blue-800 block mb-1">คนที่ 1 (ปี 1 - ผู้ติดต่อหลัก)</span>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input type="text" id="guest-1-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                  <input type="text" id="guest-1-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                </div>
-              </div>
-
-              <div class="p-2 bg-white rounded-xl border border-blue-100">
-                <span class="text-[11px] font-bold text-blue-800 block mb-1">คนที่ 2 (ปี 1)</span>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input type="text" id="guest-2-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                  <input type="text" id="guest-2-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Section Year 2 (2 Persons) -->
-          <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2.5">
-            <div class="flex items-center justify-between text-xs font-extrabold text-emerald-900">
-              <span class="flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-emerald-600"></span> โควตานักศึกษา ปี 2 (2 ท่าน)
-              </span>
-              <span class="text-[10px] text-emerald-700 font-semibold">* บังคับชื่อ-นามสกุล</span>
-            </div>
-
-            <div class="space-y-2">
-              <div class="p-2 bg-white rounded-xl border border-emerald-100">
-                <span class="text-[11px] font-bold text-emerald-800 block mb-1">คนที่ 3 (ปี 2)</span>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input type="text" id="guest-3-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                  <input type="text" id="guest-3-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                </div>
-              </div>
-
-              <div class="p-2 bg-white rounded-xl border border-emerald-100">
-                <span class="text-[11px] font-bold text-emerald-800 block mb-1">คนที่ 4 (ปี 2)</span>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input type="text" id="guest-4-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                  <input type="text" id="guest-4-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
-                </div>
-              </div>
-            </div>
-          </div>
-        `;
-      } else {
-        // Standard full tables (4 persons)
-        for (let i = 1; i <= 4; i++) {
-          const isPrimary = i === 1;
-          const row = document.createElement('div');
-          row.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2';
-          row.innerHTML = `
-            <div class="flex items-center justify-between text-xs font-bold ${isPrimary ? 'text-indigo-800' : 'text-slate-700'}">
-              <span class="flex items-center gap-1.5">
-                <span class="w-5 h-5 rounded-full ${isPrimary ? 'bg-indigo-100 text-indigo-700 font-extrabold' : 'bg-slate-200 text-slate-600'} flex items-center justify-center text-[10px]">${i}</span>
-                คนที่ ${i} ${isPrimary ? '(ผู้ติดต่อหลัก)' : ''}
-              </span>
-              <span class="text-[10px] text-rose-500 font-semibold">* บังคับชื่อ-สกุล</span>
-            </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input type="text" id="guest-${i}-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:border-indigo-500 focus:outline-none" />
-              <input type="text" id="guest-${i}-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:border-indigo-500 focus:outline-none" />
-            </div>
-          `;
-          container.appendChild(row);
-        }
-      }
-
-      document.getElementById('reservation-form').reset();
-      hideFormError();
-      document.getElementById('booking-modal').classList.remove('hidden');
-    }
-
-    function closeBookingModal() {
-      document.getElementById('booking-modal').classList.add('hidden');
-    }
-
-    function showFormError(msg) {
-      const errBox = document.getElementById('form-error');
-      const errMsg = document.getElementById('form-error-msg');
-      errMsg.textContent = msg;
-      errBox.classList.remove('hidden');
-    }
-
-    function hideFormError() {
-      document.getElementById('form-error').classList.add('hidden');
-    }
-
-    function handleReservationSubmit(e) {
+    window.handleReservationSubmit = async function(e) {
       e.preventDefault();
       hideFormError();
 
@@ -850,13 +809,15 @@
       const phone = document.getElementById('contact-phone').value.trim();
       const studentId = document.getElementById('contact-student-id').value.trim();
       const note = document.getElementById('booking-note').value.trim();
+      const submitBtn = document.getElementById('btn-submit-booking');
+      const submitText = document.getElementById('btn-submit-text');
 
+      // Real-time lock check
       if (reservations[tableId]) {
-        showFormError('โต๊ะนี้มีผู้จองไปแล้ว กรุณาเลือกโต๊ะอื่น');
+        showFormError('โต๊ะนี้เพิ่งมีผู้ใช้อื่นจองไปแล้ว กรุณาเลือกโต๊ะอื่น');
         return;
       }
 
-      // Check phone number format
       if (!/^[0-9]{9,10}$/.test(phone)) {
         showFormError('กรุณากรอกเบอร์โทรศัพท์ที่ถูกต้อง (ตัวเลข 9-10 หลัก)');
         return;
@@ -890,7 +851,7 @@
       const now = new Date();
       const bookedAt = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} น.`;
 
-      reservations[tableId] = {
+      const bookingRecord = {
         tableId,
         label: tableData.label,
         zone: tableData.zone,
@@ -902,18 +863,179 @@
         guests,
         note,
         bookingId,
-        bookedAt
+        bookedAt,
+        createdBy: currentUser ? currentUser.uid : 'anonymous',
+        createdAt: Date.now()
       };
 
-      saveReservations();
-      renderGrid();
-      closeBookingModal();
+      try {
+        submitBtn.disabled = true;
+        submitText.textContent = 'กำลังบันทึกลงระบบ...';
 
-      showToast(`จองโต๊ะ ${tableData.label} สำเร็จแล้ว!`, 'success');
-      showTicket(tableId);
-    }
+        if (db && currentUser) {
+          // Write to Firestore - All other connected browsers will update automatically
+          await setDoc(getReservationDoc(tableId), bookingRecord);
+        } else {
+          // Fallback
+          reservations[tableId] = bookingRecord;
+          saveLocalFallback();
+          renderGrid();
+        }
 
-    function openOccupiedModal(tableId) {
+        closeBookingModal();
+        showToast(`จองโต๊ะ ${tableData.label} สำเร็จและซิงค์ข้อมูลเรียบร้อยแล้ว!`, 'success');
+        showTicket(tableId);
+
+      } catch (err) {
+        console.error('Error saving reservation:', err);
+        showFormError('เกิดข้อผิดพลาดในการบันทึกข้อมูล กรุณาลองใหม่อีกครั้ง');
+      } finally {
+        submitBtn.disabled = false;
+        submitText.textContent = 'ยืนยันการจองโต๊ะ';
+      }
+    };
+
+    // Reset All Reservations from Database
+    window.confirmExecuteReset = async function() {
+      const resetBtn = document.getElementById('btn-confirm-reset');
+      try {
+        resetBtn.disabled = true;
+        resetBtn.textContent = 'กำลังล้าง...';
+
+        if (db && currentUser) {
+          const keys = Object.keys(reservations);
+          for (const key of keys) {
+            await deleteDoc(getReservationDoc(key));
+          }
+        } else {
+          reservations = {};
+          saveLocalFallback();
+          renderGrid();
+        }
+
+        closeResetModal();
+        showToast('รีเซ็ตสถานะโต๊ะทั้งหมดในเซิร์ฟเวอร์เรียบร้อยแล้ว', 'info');
+      } catch (err) {
+        console.error('Reset error:', err);
+        showToast('ไม่สามารถรีเซ็ตได้ กรุณาลองใหม่', 'error');
+      } finally {
+        resetBtn.disabled = false;
+        resetBtn.textContent = 'ยืนยันรีเซ็ต';
+      }
+    };
+
+    // Modal and View Helpers
+    window.openBookingModal = function(table) {
+      document.getElementById('modal-table-id').textContent = table.label;
+      document.getElementById('modal-table-desc').textContent = `${table.zoneName} • ${table.desc}`;
+      document.getElementById('form-table-id').value = table.id;
+      document.getElementById('form-table-type').value = table.type;
+
+      const badge = document.getElementById('modal-capacity-badge');
+      badge.textContent = `${table.capacity} ท่าน (${table.type === 'joint' ? 'ปี 1 [2 คน] + ปี 2 [2 คน]' : 'โต๊ะเต็ม'})`;
+
+      const container = document.getElementById('guests-input-container');
+      container.innerHTML = '';
+
+      if (table.type === 'joint') {
+        container.innerHTML = `
+          <div class="p-3 bg-blue-50/70 rounded-2xl border border-blue-200 space-y-2.5">
+            <div class="flex items-center justify-between text-xs font-extrabold text-blue-900">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-blue-600"></span> โควตานักศึกษา ปี 1 (2 ท่าน)
+              </span>
+              <span class="text-[10px] text-blue-700 font-semibold">* บังคับชื่อ-นามสกุล</span>
+            </div>
+            
+            <div class="space-y-2">
+              <div class="p-2 bg-white rounded-xl border border-blue-100">
+                <span class="text-[11px] font-bold text-blue-800 block mb-1">คนที่ 1 (ปี 1 - ผู้ติดต่อหลัก)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input type="text" id="guest-1-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                  <input type="text" id="guest-1-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                </div>
+              </div>
+
+              <div class="p-2 bg-white rounded-xl border border-blue-100">
+                <span class="text-[11px] font-bold text-blue-800 block mb-1">คนที่ 2 (ปี 1)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input type="text" id="guest-2-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                  <input type="text" id="guest-2-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-3 bg-emerald-50/70 rounded-2xl border border-emerald-200 space-y-2.5">
+            <div class="flex items-center justify-between text-xs font-extrabold text-emerald-900">
+              <span class="flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-emerald-600"></span> โควตานักศึกษา ปี 2 (2 ท่าน)
+              </span>
+              <span class="text-[10px] text-emerald-700 font-semibold">* บังคับชื่อ-นามสกุล</span>
+            </div>
+
+            <div class="space-y-2">
+              <div class="p-2 bg-white rounded-xl border border-emerald-100">
+                <span class="text-[11px] font-bold text-emerald-800 block mb-1">คนที่ 3 (ปี 2)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input type="text" id="guest-3-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                  <input type="text" id="guest-3-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                </div>
+              </div>
+
+              <div class="p-2 bg-white rounded-xl border border-emerald-100">
+                <span class="text-[11px] font-bold text-emerald-800 block mb-1">คนที่ 4 (ปี 2)</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <input type="text" id="guest-4-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                  <input type="text" id="guest-4-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-1.5 bg-slate-50 border border-slate-300 rounded-lg text-xs text-slate-800 focus:bg-white focus:border-indigo-500 focus:outline-none" />
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      } else {
+        for (let i = 1; i <= 4; i++) {
+          const isPrimary = i === 1;
+          const row = document.createElement('div');
+          row.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200 space-y-2';
+          row.innerHTML = `
+            <div class="flex items-center justify-between text-xs font-bold ${isPrimary ? 'text-indigo-800' : 'text-slate-700'}">
+              <span class="flex items-center gap-1.5">
+                <span class="w-5 h-5 rounded-full ${isPrimary ? 'bg-indigo-100 text-indigo-700 font-extrabold' : 'bg-slate-200 text-slate-600'} flex items-center justify-center text-[10px]">${i}</span>
+                คนที่ ${i} ${isPrimary ? '(ผู้ติดต่อหลัก)' : ''}
+              </span>
+              <span class="text-[10px] text-rose-500 font-semibold">* บังคับชื่อ-สกุล</span>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <input type="text" id="guest-${i}-first" placeholder="ชื่อจริง (First Name)" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:border-indigo-500 focus:outline-none" />
+              <input type="text" id="guest-${i}-last" placeholder="นามสกุล (Last Name)" required class="w-full px-3 py-2 bg-white border border-slate-300 rounded-lg text-xs text-slate-800 focus:border-indigo-500 focus:outline-none" />
+            </div>
+          `;
+          container.appendChild(row);
+        }
+      }
+
+      document.getElementById('reservation-form').reset();
+      hideFormError();
+      document.getElementById('booking-modal').classList.remove('hidden');
+    };
+
+    window.closeBookingModal = function() {
+      document.getElementById('booking-modal').classList.add('hidden');
+    };
+
+    window.showFormError = function(msg) {
+      const errBox = document.getElementById('form-error');
+      const errMsg = document.getElementById('form-error-msg');
+      errMsg.textContent = msg;
+      errBox.classList.remove('hidden');
+    };
+
+    window.hideFormError = function() {
+      document.getElementById('form-error').classList.add('hidden');
+    };
+
+    window.openOccupiedModal = function(tableId) {
       const res = reservations[tableId];
       if (!res) return;
 
@@ -933,9 +1055,9 @@
         </div>
 
         <div>
-          <span class="text-xs text-slate-600 font-bold block mb-2">รายนามสมาชิกที่ลงทะเบียน (${res.guests.length} ท่าน):</span>
+          <span class="text-xs text-slate-600 font-bold block mb-2">รายนามสมาชิกที่ลงทะเบียน (${res.guests ? res.guests.length : 0} ท่าน):</span>
           <div class="space-y-1.5 bg-slate-50 p-3 rounded-2xl border border-slate-200">
-            ${res.guests.map((g, i) => `
+            ${res.guests ? res.guests.map((g, i) => `
               <div class="text-xs text-slate-700 flex items-center justify-between py-1.5 border-b border-slate-200 last:border-0">
                 <span>
                   <strong class="text-indigo-600 font-mono mr-1.5">${i + 1}.</strong> ${escapeHtml(g.first)} ${escapeHtml(g.last)}
@@ -943,7 +1065,7 @@
                 </span>
                 <span class="text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 font-medium">ที่นั่ง ${i + 1}</span>
               </div>
-            `).join('')}
+            `).join('') : ''}
           </div>
         </div>
 
@@ -954,13 +1076,13 @@
       `;
 
       document.getElementById('occupied-modal').classList.remove('hidden');
-    }
+    };
 
-    function closeOccupiedModal() {
+    window.closeOccupiedModal = function() {
       document.getElementById('occupied-modal').classList.add('hidden');
-    }
+    };
 
-    function showTicket(tableId) {
+    window.showTicket = function(tableId) {
       const res = reservations[tableId];
       if (!res) return;
 
@@ -971,7 +1093,7 @@
       document.getElementById('ticket-id').textContent = '#' + res.bookingId;
 
       const guestsContainer = document.getElementById('ticket-guests');
-      guestsContainer.innerHTML = res.guests.map((g, i) => `
+      guestsContainer.innerHTML = res.guests ? res.guests.map((g, i) => `
         <div class="flex items-center justify-between py-1.5 border-b border-slate-200 last:border-0">
           <div class="flex items-center gap-2">
             <span class="w-5 h-5 rounded-full bg-indigo-100 text-indigo-700 text-[10px] flex items-center justify-center font-bold">${i + 1}</span>
@@ -980,17 +1102,18 @@
           </div>
           <span class="text-[10px] text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">1 ที่นั่ง</span>
         </div>
-      `).join('');
+      `).join('') : '';
 
       document.getElementById('ticket-modal').classList.remove('hidden');
-    }
+    };
 
-    function closeTicketModal() {
+    window.closeTicketModal = function() {
       document.getElementById('ticket-modal').classList.add('hidden');
-    }
+    };
 
     function renderBookingsTable() {
       const tbody = document.getElementById('bookings-table-body');
+      if (!tbody) return;
       tbody.innerHTML = '';
 
       const tableIds = Object.keys(reservations);
@@ -1010,12 +1133,14 @@
         const tr = document.createElement('tr');
         tr.className = 'hover:bg-slate-50/80 transition border-b border-slate-100';
 
-        const guestsListHtml = res.guests.map((g, idx) => `
+        const guestsListHtml = res.guests ? res.guests.map((g, idx) => `
           <div class="text-xs ${idx === 0 ? 'text-indigo-900 font-bold' : 'text-slate-700'}">
             <span class="text-slate-400 mr-1">${idx + 1}.</span> ${escapeHtml(g.first)} ${escapeHtml(g.last)}
             ${g.note ? `<span class="text-[10px] px-1 py-0.2 bg-slate-100 text-slate-600 rounded ml-1 font-semibold">${g.note}</span>` : ''}
           </div>
-        `).join('');
+        `).join('') : '';
+
+        const primaryGuest = res.guests && res.guests[0] ? `${escapeHtml(res.guests[0].first)} ${escapeHtml(res.guests[0].last)}` : '-';
 
         tr.innerHTML = `
           <td class="px-4 py-3 font-mono font-extrabold text-slate-900 text-base">
@@ -1027,7 +1152,7 @@
             </span>
           </td>
           <td class="px-4 py-3">
-            <div class="font-bold text-slate-900 text-xs">${escapeHtml(res.guests[0].first)} ${escapeHtml(res.guests[0].last)}</div>
+            <div class="font-bold text-slate-900 text-xs">${primaryGuest}</div>
             <div class="text-xs text-slate-500 font-mono">${formatPhone(res.phone)}</div>
           </td>
           <td class="px-4 py-3">
@@ -1061,7 +1186,7 @@
     }
 
     // Zone Filtering
-    function setFilterZone(zone) {
+    window.setFilterZone = function(zone) {
       activeFilter = zone;
       document.querySelectorAll('.zone-pill-btn').forEach(btn => {
         btn.classList.remove('bg-indigo-600', 'text-white', 'shadow-sm');
@@ -1075,31 +1200,21 @@
       }
 
       renderGrid();
-    }
+    };
 
-    function handleSearch(val) {
+    window.handleSearch = function(val) {
       currentSearchTerm = val.trim();
       renderGrid();
-    }
+    };
 
-    // Reset All Functions
-    function promptResetAll() {
+    window.promptResetAll = function() {
       document.getElementById('confirm-reset-modal').classList.remove('hidden');
-    }
+    };
 
-    function closeResetModal() {
+    window.closeResetModal = function() {
       document.getElementById('confirm-reset-modal').classList.add('hidden');
-    }
+    };
 
-    function confirmExecuteReset() {
-      localStorage.removeItem(STORAGE_KEY);
-      reservations = {};
-      renderGrid();
-      closeResetModal();
-      showToast('รีเซ็ตสถานะโต๊ะทั้งหมดเรียบร้อยแล้ว', 'info');
-    }
-
-    // Helpers
     function formatPhone(p) {
       if (!p || p.length < 9) return p;
       if (p.length === 10) return `${p.substring(0, 3)}-${p.substring(3, 6)}-${p.substring(6)}`;
@@ -1120,8 +1235,11 @@
       if (type === 'success') {
         icon.textContent = '🎉';
         toast.className = 'fixed bottom-5 right-5 z-50 transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-semibold border bg-emerald-50 border-emerald-300 text-emerald-900 translate-y-0 opacity-100';
+      } else if (type === 'error') {
+        icon.textContent = '⚠️';
+        toast.className = 'fixed bottom-5 right-5 z-50 transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-semibold border bg-rose-50 border-rose-300 text-rose-900 translate-y-0 opacity-100';
       } else {
-        icon.textContent = 'ℹ️';
+        icon.textContent = '🔔';
         toast.className = 'fixed bottom-5 right-5 z-50 transition-all duration-300 flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl text-sm font-semibold border bg-white border-slate-300 text-slate-800 translate-y-0 opacity-100';
       }
 
@@ -1130,7 +1248,7 @@
       }, 3500);
     }
 
-    // Window Backdrop Listeners
+    // Modal dismiss on backdrop click
     window.addEventListener('click', (e) => {
       if (e.target === document.getElementById('booking-modal')) closeBookingModal();
       if (e.target === document.getElementById('occupied-modal')) closeOccupiedModal();
@@ -1138,11 +1256,11 @@
       if (e.target === document.getElementById('confirm-reset-modal')) closeResetModal();
     });
 
-    // Start on load
-    window.onload = function() {
-      loadReservations();
+    // Start App & Live Sync
+    window.addEventListener('DOMContentLoaded', () => {
       renderGrid();
-    };
+      initFirebase();
+    });
   </script>
 </body>
 </html>
